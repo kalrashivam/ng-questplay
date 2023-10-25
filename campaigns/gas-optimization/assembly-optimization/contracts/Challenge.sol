@@ -19,16 +19,10 @@ abstract contract Challenge {
             mstore(0x40, add(copy, and(add(add(mload(array), 0x20), 0x1f), not(0x1f))))
             // store length in memory
             mstore(copy, mload(array))
-        }
+            let max := add(mload(array), 32)
 
-        uint256 max = array.length + 31;
-        for (uint256 i=32; i<=max;) {
-            assembly {
-                mstore(add(copy, i), mload(add(array, i)))
-            }
-
-            unchecked {
-                i+=32;
+            for {let n := 32} lt(n, max) {n := add(n, 32)} {
+                mstore(add(copy, n), mload(add(array, n)))
             }
         }
     }

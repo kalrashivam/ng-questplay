@@ -9,13 +9,21 @@ abstract contract Challenge {
      * @param array The array to copy.
      * @return copy The copied array.
      */
-    function copyArray(bytes memory array) 
-        internal 
-        pure 
-        returns (bytes memory copy) 
+    function copyArray(bytes memory array)
+        internal
+        pure
+        returns (bytes memory copy)
     {
+        copy = new bytes(array.length);
+        uint256 max = array.length + 31;
+        for (uint256 i=32; i<=max;) {
+            assembly {
+                mstore(add(copy, i), mload(add(array, i)))
+            }
 
-         // IMPLEMENT THIS FUNCTION
-
+            unchecked {
+                i+=32;
+            }
+        }
     }
 }

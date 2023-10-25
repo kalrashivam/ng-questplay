@@ -14,7 +14,13 @@ abstract contract Challenge {
         pure
         returns (bytes memory copy)
     {
-        copy = new bytes(array.length);
+        assembly {
+            copy := mload(0x40)
+            mstore(0x40, add(copy, and(add(add(mload(array), 0x20), 0x1f), not(0x1f))))
+            // store length in memory
+            mstore(copy, mload(array))
+        }
+
         uint256 max = array.length + 31;
         for (uint256 i=32; i<=max;) {
             assembly {
